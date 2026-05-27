@@ -47,8 +47,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "hyprwm";
     repo = "xdg-desktop-portal-hyprland";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-C1fHCuhF7BwKntTkTHiGyz7WjDWNOjJvL/y53HOodb0=";
-    fetchSubmodules = true;
+    hash = "sha256-B7nwX0PE0KBo1/ZtuwJtA7dBG6gdPW5tSBb0skY8DHA=";
   };
 
   # patched with Input Capture Desktop Portal
