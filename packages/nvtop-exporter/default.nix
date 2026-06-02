@@ -14,14 +14,14 @@
 
 buildPythonPackage (finalAttrs: {
   pname = "nvtop-exporter";
-  version = "0.0.10";
+  version = "0.0.11";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "spotdemo4";
     repo = "nvtop-exporter";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-xjJA6DMvWbBL+Ih2Al2Ybfcpn4yoB49e8FGxs9wYRQ4=";
+    hash = "sha256-89bsdstpFwt5MgW4Bbvt3+kPvzW7CYFCw0d+xtR6Xho=";
   };
 
   build-system = [
