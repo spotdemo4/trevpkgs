@@ -20,7 +20,7 @@ buildRustPackage (finalAttrs: {
   cargoHash = "sha256-JrOU+sOn7j9Ean5/f/2HtIqumQpryK5uxyQh68lL7cI=";
 
   preCheck = ''
-    export XDG_CACHE_HOME="$TMPDIR/xdg-cache"
+    export HOME="$TMPDIR"
   '';
 
   passthru.updateScript = nix-update-script {
