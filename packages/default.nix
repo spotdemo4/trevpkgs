@@ -12,6 +12,7 @@ rec {
   bwrap-apprun = pkgs.pkgsStatic.callPackage ./bwrap-apprun { };
   catppuccin-gtk = pkgs.callPackage ./catppuccin-gtk { };
   catppuccin-zen-browser = pkgs.callPackage ./catppuccin-zen-browser { };
+  chrome-devtools-mcp = pkgs.callPackage ./chrome-devtools-mcp { };
   codex-commit = pkgs.callPackage ./codex-commit { };
   fetch-hash = pkgs.callPackage ./fetch-hash { };
   fix-hash = pkgs.callPackage ./fix-hash { };
