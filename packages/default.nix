@@ -5,9 +5,7 @@
 let
   libs = import ../libs { inherit system pkgs; };
 in
-rec {
-  bobgen = pkgs.callPackage ./bobgen { };
-  bobgen-unstable = pkgs.callPackage ./bobgen/unstable.nix { inherit bobgen; };
+{
   bumper = pkgs.callPackage ./bumper { };
   bwrap-apprun = pkgs.pkgsStatic.callPackage ./bwrap-apprun { };
   catppuccin-gtk = pkgs.callPackage ./catppuccin-gtk { };
