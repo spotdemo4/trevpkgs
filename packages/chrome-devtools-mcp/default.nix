@@ -37,7 +37,7 @@ buildNpmPackage (final: {
     mainProgram = "chrome-devtools-mcp";
     description = "Chrome DevTools for coding agents";
     license = lib.licenses.asl20;
-    platforms = lib.platforms.all;
+    platforms = lib.platforms.unix;
     homepage = "https://github.com/ChromeDevTools/chrome-devtools-mcp";
     changelog = "https://github.com/ChromeDevTools/chrome-devtools-mcp/releases/tag/v${final.version}";
   };
