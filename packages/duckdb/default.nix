@@ -45,6 +45,42 @@
 }:
 
 let
+  canRunHostBinaries = stdenv.buildPlatform.canExecute stdenv.hostPlatform;
+
+  duckdbPlatform =
+    let
+      os =
+        if stdenv.hostPlatform.isLinux then
+          "linux"
+        else if stdenv.hostPlatform.isDarwin then
+          "osx"
+        else if stdenv.hostPlatform.isWindows then
+          "windows"
+        else if stdenv.hostPlatform.isFreeBSD then
+          "freebsd"
+        else
+          throw "Unsupported DuckDB platform OS: ${stdenv.hostPlatform.config}";
+      arch =
+        if stdenv.hostPlatform.isx86_64 then
+          "amd64"
+        else if stdenv.hostPlatform.isAarch64 then
+          "arm64"
+        else if stdenv.hostPlatform.isi686 then
+          "i686"
+        else
+          throw "Unsupported DuckDB platform architecture: ${stdenv.hostPlatform.config}";
+      postfix =
+        if stdenv.hostPlatform.isLinux && stdenv.hostPlatform.isMusl then
+          "_musl"
+        else if stdenv.hostPlatform.isAndroid then
+          "_android"
+        else if stdenv.hostPlatform.isMinGW then
+          "_mingw"
+        else
+          "";
+    in
+    "${os}_${arch}${postfix}";
+
   mkExtension = name: {
     inherit name;
     loadOptions = [ ];
@@ -165,9 +201,12 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeFeature "OVERRIDE_GIT_DESCRIBE" "v${finalAttrs.version}")
     # development settings
     (lib.cmakeBool "BUILD_UNITTESTS" finalAttrs.doInstallCheck)
+  ]
+  ++ lib.optionals (!canRunHostBinaries) [
+    (lib.cmakeFeature "DUCKDB_EXPLICIT_PLATFORM" duckdbPlatform)
   ];
 
-  doInstallCheck = true;
+  doInstallCheck = canRunHostBinaries;
   nativeInstallCheckInputs = [ versionCheckHook ];
   installCheckPhase =
     let

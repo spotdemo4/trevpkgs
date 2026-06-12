@@ -14,6 +14,7 @@ in
   codex-commit = pkgs.callPackage ./codex-commit { };
   duckdb = pkgs.callPackage ./duckdb { };
   duckdb-static = pkgs.pkgsStatic.callPackage ./duckdb { };
+  duckdb-cross = pkgs.pkgsCross.aarch64-multiplatform.callPackage ./duckdb { };
   fetch-hash = pkgs.callPackage ./fetch-hash { };
   fix-hash = pkgs.callPackage ./fix-hash { };
   flake-release = pkgs.callPackage ./flake-release { };
