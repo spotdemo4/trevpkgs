@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  callPackage,
   cmake,
   ninja,
   openssl,
@@ -17,22 +18,100 @@
   withTpcds ? true,
   withTpch ? true,
 
+  # out-of-tree extensions
+  withAvro ? false,
+  withAws ? false,
+  withAzure ? false,
+  withDucklake ? false,
+  withEncodings ? false,
+  withExcel ? false,
+  withFts ? false,
+  withHttpfs ? false,
+  withIceberg ? false,
+  withInet ? false,
+  withMysqlScanner ? false,
+  withOdbcScanner ? false,
+  withPostgresScanner ? false,
+  withQuack ? false,
+  withSpatial ? false,
+  withSqliteScanner ? false,
+  withSqlsmith ? false,
+  withVss ? false,
+
   # drivers
   withJdbc ? false,
   withOdbc ? false,
 }:
 
 let
-  enabledExtensions =
+  mkExtension = name: {
+    inherit name;
+    loadOptions = [ ];
+  };
+  inTreeExtensions = map mkExtension (
     lib.optionals withAutocomplete [ "autocomplete" ]
     ++ lib.optionals withIcu [ "icu" ]
     ++ lib.optionals withJson [ "json" ]
     ++ lib.optionals withTpcds [ "tpcds" ]
-    ++ lib.optionals withTpch [ "tpch" ];
+    ++ lib.optionals withTpch [ "tpch" ]
+  );
+
+  extensions = callPackage ./extensions { };
+  externalExtensionDrvs =
+    lib.optionals withAvro [ extensions.avro ]
+    ++ lib.optionals withAws [ extensions.aws ]
+    ++ lib.optionals withAzure [ extensions.azure ]
+    ++ lib.optionals withDucklake [ extensions.ducklake ]
+    ++ lib.optionals withEncodings [ extensions.encodings ]
+    ++ lib.optionals withExcel [ extensions.excel ]
+    ++ lib.optionals withFts [ extensions.fts ]
+    ++ lib.optionals withHttpfs [ extensions.httpfs ]
+    ++ lib.optionals withIceberg [ extensions.iceberg ]
+    ++ lib.optionals withInet [ extensions.inet ]
+    ++ lib.optionals withMysqlScanner [ extensions.mysql-scanner ]
+    ++ lib.optionals withOdbcScanner [ extensions.odbc-scanner ]
+    ++ lib.optionals withPostgresScanner [ extensions.postgres-scanner ]
+    ++ lib.optionals withQuack [ extensions.quack ]
+    ++ lib.optionals withSpatial [ extensions.spatial ]
+    ++ lib.optionals withSqliteScanner [ extensions.sqlite-scanner ]
+    ++ lib.optionals withSqlsmith [ extensions.sqlsmith ]
+    ++ lib.optionals withVss [ extensions.vss ];
+
+  externalExtensions = map (
+    extension:
+    extension.passthru.duckdbExtension
+    // {
+      src = extension;
+    }
+  ) externalExtensionDrvs;
+
+  enabledExtensions = inTreeExtensions ++ externalExtensions;
+
+  formatExtensionLoad =
+    extension:
+    if extension.loadOptions == [ ] then
+      "duckdb_extension_load(${extension.name})"
+    else
+      lib.concatStringsSep "\n" (
+        [ "duckdb_extension_load(${extension.name}" ]
+        ++ map (option: "    ${option}") extension.loadOptions
+        ++ [ ")" ]
+      );
 
   extensionLoadConfig = lib.concatMapStringsSep "\n" (
-    extension: "duckdb_extension_load(${extension})"
+    extension: formatExtensionLoad extension
   ) enabledExtensions;
+
+  externalExtensionCopyCommands = lib.concatMapStringsSep "\n" (
+    extension:
+    let
+      destination = "extension_external/${extension.name}";
+    in
+    ''
+      cp -R ${lib.escapeShellArg (toString extension.src)} ${lib.escapeShellArg destination}
+      chmod -R u+w ${lib.escapeShellArg destination}
+    ''
+  ) externalExtensions;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "duckdb";
@@ -64,6 +143,11 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals withOdbc [ unixodbc ];
 
   postPatch = lib.optionalString (enabledExtensions != [ ]) ''
+    ${lib.optionalString (externalExtensions != [ ]) ''
+      mkdir -p extension_external
+      ${externalExtensionCopyCommands}
+    ''}
+
     cat >> extension/extension_config.cmake <<'EOF'
 
     ${extensionLoadConfig}
@@ -79,9 +163,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   doInstallCheck = false;
-
   nativeInstallCheckInputs = [ versionCheckHook ];
-
   installCheckPhase =
     let
       excludes = map (pattern: "exclude:'${pattern}'") (
@@ -184,7 +266,10 @@ stdenv.mkDerivation (finalAttrs: {
       runHook postInstallCheck
     '';
 
-  # passthru.updateScript = ./update.sh;
+  passthru = {
+    extensions = extensions;
+    # updateScript = ./update.sh;
+  };
 
   meta = {
     changelog = "https://github.com/duckdb/duckdb/releases/tag/v${finalAttrs.version}";
