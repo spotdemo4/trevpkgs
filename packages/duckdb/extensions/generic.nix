@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   fetchFromGitHub,
+  nix-update-script,
 }:
 
 {
@@ -9,6 +10,8 @@
   repo,
   rev,
   hash,
+  attrName ? lib.replaceStrings [ "_" ] [ "-" ] name,
+  branch ? "main",
   owner ? "duckdb",
   fetchSubmodules ? false,
   loadOptions ? [ ],
@@ -46,8 +49,19 @@ stdenvNoCC.mkDerivation {
     runHook postInstall
   '';
 
-  passthru.duckdbExtension = {
-    inherit name loadOptions;
+  passthru = {
+    duckdbExtension = {
+      inherit name loadOptions;
+    };
+
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--commit"
+        "--version=branch=${branch}"
+        "--override-filename=packages/duckdb/extensions/${attrName}.nix"
+        "duckdb.extensions.${attrName}"
+      ];
+    };
   };
 
   meta = {

@@ -7,6 +7,7 @@
   ninja,
   openssl,
   openjdk11,
+  nix-update-script,
   python3,
   unixodbc,
   versionCheckHook,
@@ -267,8 +268,14 @@ stdenv.mkDerivation (finalAttrs: {
     '';
 
   passthru = {
-    extensions = extensions;
-    # updateScript = ./update.sh;
+    inherit extensions;
+
+    updateScript = nix-update-script {
+      extraArgs = [
+        "--commit"
+        finalAttrs.pname
+      ];
+    };
   };
 
   meta = {
