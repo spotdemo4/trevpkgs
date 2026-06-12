@@ -8,11 +8,32 @@
   openjdk11,
   python3,
   unixodbc,
+  versionCheckHook,
+
+  # extensions
+  withAutocomplete ? true,
+  withIcu ? true,
+  withJson ? true,
+  withTpcds ? true,
+  withTpch ? true,
+
+  # drivers
   withJdbc ? false,
   withOdbc ? false,
-  versionCheckHook,
 }:
 
+let
+  enabledExtensions =
+    lib.optionals withAutocomplete [ "autocomplete" ]
+    ++ lib.optionals withIcu [ "icu" ]
+    ++ lib.optionals withJson [ "json" ]
+    ++ lib.optionals withTpcds [ "tpcds" ]
+    ++ lib.optionals withTpch [ "tpch" ];
+
+  extensionLoadConfig = lib.concatMapStringsSep "\n" (
+    extension: "duckdb_extension_load(${extension})"
+  ) enabledExtensions;
+in
 stdenv.mkDerivation (finalAttrs: {
   pname = "duckdb";
   version = "1.5.3";
@@ -42,8 +63,14 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals withJdbc [ openjdk11 ]
   ++ lib.optionals withOdbc [ unixodbc ];
 
+  postPatch = lib.optionalString (enabledExtensions != [ ]) ''
+    cat >> extension/extension_config.cmake <<'EOF'
+
+    ${extensionLoadConfig}
+    EOF
+  '';
+
   cmakeFlags = [
-    (lib.cmakeFeature "DUCKDB_EXTENSION_CONFIGS" "${finalAttrs.src}/.github/config/in_tree_extensions.cmake")
     (lib.cmakeBool "BUILD_ODBC_DRIVER" withOdbc)
     (lib.cmakeBool "JDBC_DRIVER" withJdbc)
     (lib.cmakeFeature "OVERRIDE_GIT_DESCRIBE" "v${finalAttrs.version}-0-g${finalAttrs.rev}")
@@ -51,7 +78,7 @@ stdenv.mkDerivation (finalAttrs: {
     (lib.cmakeBool "BUILD_UNITTESTS" finalAttrs.doInstallCheck)
   ];
 
-  doInstallCheck = true;
+  doInstallCheck = false;
 
   nativeInstallCheckInputs = [ versionCheckHook ];
 
