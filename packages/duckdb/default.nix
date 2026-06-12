@@ -117,7 +117,6 @@ in
 stdenv.mkDerivation (finalAttrs: {
   pname = "duckdb";
   version = "1.5.3";
-  rev = "14eca11bd9d4a0de2ea0f078be588a9c1c5b279c";
 
   src = fetchFromGitHub {
     owner = "duckdb";
@@ -158,7 +157,7 @@ stdenv.mkDerivation (finalAttrs: {
   cmakeFlags = [
     (lib.cmakeBool "BUILD_ODBC_DRIVER" withOdbc)
     (lib.cmakeBool "JDBC_DRIVER" withJdbc)
-    (lib.cmakeFeature "OVERRIDE_GIT_DESCRIBE" "v${finalAttrs.version}-0-g${finalAttrs.rev}")
+    (lib.cmakeFeature "OVERRIDE_GIT_DESCRIBE" "v${finalAttrs.version}")
     # development settings
     (lib.cmakeBool "BUILD_UNITTESTS" finalAttrs.doInstallCheck)
   ];
