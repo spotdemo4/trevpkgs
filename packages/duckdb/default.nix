@@ -33,7 +33,7 @@
   withMysqlScanner ? false,
   withOdbcScanner ? false,
   withPostgresScanner ? false,
-  withQuack ? false,
+  withQuack ? true,
   withSpatial ? false,
   withSqliteScanner ? false,
   withSqlsmith ? false,
@@ -142,6 +142,10 @@ stdenv.mkDerivation (finalAttrs: {
   ++ lib.optionals withJdbc [ openjdk11 ]
   ++ lib.optionals withOdbc [ unixodbc ];
 
+  patches = lib.optionals stdenv.hostPlatform.isStatic [
+    ./static-no-loadable-extensions.patch
+  ];
+
   postPatch = lib.optionalString (enabledExtensions != [ ]) ''
     ${lib.optionalString (externalExtensions != [ ]) ''
       mkdir -p extension_external
@@ -157,6 +161,7 @@ stdenv.mkDerivation (finalAttrs: {
   cmakeFlags = [
     (lib.cmakeBool "BUILD_ODBC_DRIVER" withOdbc)
     (lib.cmakeBool "JDBC_DRIVER" withJdbc)
+    (lib.cmakeBool "NIX_STATIC_BUILD" stdenv.hostPlatform.isStatic)
     (lib.cmakeFeature "OVERRIDE_GIT_DESCRIBE" "v${finalAttrs.version}")
     # development settings
     (lib.cmakeBool "BUILD_UNITTESTS" finalAttrs.doInstallCheck)
@@ -220,6 +225,19 @@ stdenv.mkDerivation (finalAttrs: {
           "test/sql/copy/file_size_bytes.test"
           # https://github.com/duckdb/duckdb/issues/17757#issuecomment-3032080432
           "test/issues/general/test_17757.test"
+        ]
+        ++ lib.optionals stdenv.hostPlatform.isStatic [
+          "test/extension/concurrent_load_extension.test"
+          "test/extension/consistent_semicolon_extension_parse.test"
+          "test/extension/load_extension.test"
+          "test/extension/load_test_alias.test"
+          "test/extension/loadable_parser_override.test"
+          "test/extension/reset_global_extension_option.test"
+          "test/extension/test_alias_point.test"
+          "test/extension/test_custom_type_modifier_cast.test"
+          "test/extension/test_loadable_optimizer.test"
+          "test/extension/test_tags.test"
+          "test/extension/update_extensions.test"
         ]
         ++ lib.optionals stdenv.hostPlatform.isAarch64 [
           "test/sql/aggregate/aggregates/test_kurtosis.test"
