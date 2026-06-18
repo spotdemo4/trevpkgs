@@ -11,6 +11,12 @@
   sizeVariants ? [ ], # default: standard
   tweaks ? [ ],
 }:
+let
+  shellTweaks = builtins.filter (tweak: tweak == "float") tweaks;
+  gtkTweaks = map (tweak: if tweak == "outline" then "border" else tweak) (
+    builtins.filter (tweak: tweak != "float") tweaks
+  );
+in
 
 lib.checkListOfEnum "catppuccin-gtk-theme: theme variants"
   [
@@ -51,6 +57,7 @@ lib.checkListOfEnum "catppuccin-gtk-theme: theme variants"
     "macchiato"
     "black"
     "float"
+    "border"
     "outline"
     "macos"
   ]
@@ -86,11 +93,12 @@ lib.checkListOfEnum "catppuccin-gtk-theme: theme variants"
     installPhase = ''
       runHook preInstall
 
-      name= HOME="$TMPDIR" ./install.sh \
+      name= BATCH_MODE=true HOME="$TMPDIR" ./install.sh \
         ${lib.optionalString (themeVariants != [ ]) "--theme " + toString themeVariants} \
         ${lib.optionalString (colorVariants != [ ]) "--color " + toString colorVariants} \
         ${lib.optionalString (sizeVariants != [ ]) "--size " + toString sizeVariants} \
-        ${lib.optionalString (tweaks != [ ]) "--tweaks " + toString tweaks} \
+        ${lib.optionalString (gtkTweaks != [ ]) "--tweaks " + toString gtkTweaks} \
+        ${lib.optionalString (shellTweaks != [ ]) "--shell " + toString shellTweaks} \
         --dest $out/share/themes
 
       jdupes --quiet --link-soft --recurse $out/share
