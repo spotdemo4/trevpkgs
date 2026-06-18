@@ -3,7 +3,7 @@
   lib,
   nix-update-script,
   stdenv,
-  zig_0_15,
+  zig,
 }:
 
 stdenv.mkDerivation (finalAttrs: {
@@ -17,19 +17,20 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-NuNiOx2Moupi23q1yX/aDIoleg0bGUvlcFYTqAPVkgU=";
   };
 
-  zigDeps = zig_0_15.fetchDeps {
+  zigDeps = zig.fetchDeps {
     inherit (finalAttrs) src pname version;
     hash = "sha256-zqf9fK99IfmQ+UKzDxrUq1ocdpfI7kT3ijotx67OcO4=";
     fetchAll = true;
   };
 
   nativeBuildInputs = [
-    zig_0_15.hook
+    zig.hook
   ];
 
-  postConfigure = ''
-    ln -s ${finalAttrs.zigDeps} "$ZIG_GLOBAL_CACHE_DIR/p"
-  '';
+  zigBuildFlags = [
+    "--system"
+    "${finalAttrs.zigDeps}"
+  ];
 
   passthru.updateScript = nix-update-script {
     extraArgs = [
