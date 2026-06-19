@@ -38,7 +38,7 @@ let
   binaries = {
     aarch64-linux = fetchurl {
       url = "https://github.com/opengrep/opengrep/releases/download/v${version}/opengrep-core_linux_aarch64.tar.gz";
-      hash = "sha256-AJuFKAIp9/mwPlx4n31EUWNipy9M8WF3pvt4ZZlAoeE=";
+      hash = "sha256-6xv3YIrpE4MFXwZr3Ch0Aub2z+sjBaRrsQ4qGT1KOWU=";
     };
     x86_64-linux = fetchurl {
       url = "https://github.com/opengrep/opengrep/releases/download/v${version}/opengrep-core_linux_x86.tar.gz";
