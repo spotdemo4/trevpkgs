@@ -83,9 +83,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
-          fetch_depth: 0
+          fetch-depth: 0
 
-      - uses: spotdemo4/codex-action@8050fe759356d42cc15ab1ed988c24fb4ebd6769 # v0.1.0
+      - name: Run codex
+        uses: spotdemo4/codex-action@8050fe759356d42cc15ab1ed988c24fb4ebd6769 # v0.1.0
         with:
           auth: ${{ secrets.CODEX_ACTION_AUTH }}
           client-id: ${{ vars.CLIENT_ID }}
