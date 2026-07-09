@@ -73,9 +73,10 @@ jobs:
   fix:
     needs: check
     if: >-
-      failure() &&
+      always() &&
       github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (needs.check.result == 'failure' || needs.check.result == 'cancelled')
     runs-on: ubuntu-latest
     steps:
       - name: Initialize
