@@ -78,6 +78,8 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository &&
       (needs.check.result == 'failure' || needs.check.result == 'cancelled')
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: Initialize
         uses: spotdemo4/nix-init@1443d93dfa3ca2f043b37f848631d6ac5563b0ec # v1.56.0
