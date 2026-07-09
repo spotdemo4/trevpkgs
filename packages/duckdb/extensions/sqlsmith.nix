@@ -4,8 +4,8 @@
   name = "sqlsmith";
   repo = "duckdb-sqlsmith";
   branch = "main";
-  rev = "ed4252b074934adc75a65b17332947d4edad8a45";
-  hash = "sha256-yMQF7kVvxHHeIDxixMajumtL5BDvi82aOO8Qqkl3eUg=";
+  rev = "2144df06ad9069a651adb6590349dcd638633ee1";
+  hash = "sha256-ea+d6evPF3ynZZOwO931jw7VT8R5+tWpG/Aj6+r9VYQ=";
   loadOptions = [ "DONT_LINK" ];
   duckdbPostPatch = ''
     substituteInPlace extension_external/sqlsmith/src/statement_simplifier.cpp \
