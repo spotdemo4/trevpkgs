@@ -47,7 +47,7 @@
         return Read(buffer, 1, nBytes);
       }
 
-      size_t Read(void *buffer, size_t size, size_t count) override {" \
+      size_t Read(void *buffer, size_t size, size_t count) {" \
       --replace-fail "size_t Write(const void *buffer, size_t size, size_t count) override {" "void ClearErr() override {
       }
 
@@ -59,7 +59,7 @@
         return Write(buffer, 1, nBytes);
       }
 
-      size_t Write(const void *buffer, size_t size, size_t count) override {"
+      size_t Write(const void *buffer, size_t size, size_t count) {"
 
     substituteInPlace extension_external/spatial/src/spatial/util/math.cpp \
       --replace-fail "#if SPATIAL_USE_GEOS" "#if 0"
