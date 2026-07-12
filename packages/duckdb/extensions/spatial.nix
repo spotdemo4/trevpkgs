@@ -43,11 +43,20 @@
       --replace-fail "return new DuckDBFileHandle(std::move(file));" "return VSIVirtualHandleUniquePtr(new DuckDBFileHandle(std::move(file)));" \
       --replace-fail "bool IsLocal(const char *gdal_file_path) override" "bool IsLocal(const char *gdal_file_path) const override" \
       --replace-fail "int Rename(const char *oldpath, const char *newpath) override" "int Rename(const char *oldpath, const char *newpath, GDALProgressFunc, void *) override" \
+      --replace-fail "size_t Read(void *buffer, size_t size, size_t count) override {" "size_t Read(void *buffer, size_t nBytes) override {
+        return Read(buffer, 1, nBytes);
+      }
+
+      size_t Read(void *buffer, size_t size, size_t count) override {" \
       --replace-fail "size_t Write(const void *buffer, size_t size, size_t count) override {" "void ClearErr() override {
       }
 
       int Error() override {
         return FALSE;
+      }
+
+      size_t Write(const void *buffer, size_t nBytes) override {
+        return Write(buffer, 1, nBytes);
       }
 
       size_t Write(const void *buffer, size_t size, size_t count) override {"
