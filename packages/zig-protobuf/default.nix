@@ -20,7 +20,7 @@ stdenv.mkDerivation (finalAttrs: {
   zigDeps =
     (zig.fetchDeps {
       inherit (finalAttrs) src pname version;
-      hash = "sha256-zqf9fK99IfmQ+UKzDxrUq1ocdpfI7kT3ijotx67OcO4=";
+      hash = "sha256-J3Q8DV96naximacTUL+NjDsHZLYFRqFhO1FLvJAciNE=";
       fetchAll = true;
     }).overrideAttrs
       (oldAttrs: {
