@@ -17,6 +17,12 @@ stdenv.mkDerivation (finalAttrs: {
     hash = "sha256-NuNiOx2Moupi23q1yX/aDIoleg0bGUvlcFYTqAPVkgU=";
   };
 
+  postPatch = ''
+    substituteInPlace build.zig \
+      --replace-fail 'const include = if (try build_util.getProtocDependency(b)) |protoc| protoc.path("include") else b.path("");' \
+      'const include = b.path("");'
+  '';
+
   zigDeps =
     (zig.fetchDeps {
       inherit (finalAttrs) src pname version;
