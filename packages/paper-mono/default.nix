@@ -2,7 +2,9 @@
   lib,
   stdenvNoCC,
   fetchFromGitHub,
+  fontforge,
   installFonts,
+  nerd-font-patcher,
   nix-update-script,
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
@@ -23,9 +25,22 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   };
 
   strictDeps = true;
-  nativeBuildInputs = [ installFonts ];
+  nativeBuildInputs = [
+    fontforge
+    installFonts
+    nerd-font-patcher
+  ];
 
-  dontBuild = true;
+  buildPhase = ''
+    runHook preBuild
+
+    mkdir patched
+    for font in fonts/ttf/*.ttf; do
+      nerd-font-patcher --complete --mono --quiet --outputdir patched "$font"
+    done
+
+    runHook postBuild
+  '';
 
   installPhase = ''
     runHook preInstall
