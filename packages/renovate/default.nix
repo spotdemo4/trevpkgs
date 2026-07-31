@@ -6,7 +6,7 @@
   makeWrapper,
   nix-update-script,
   nodejs_24,
-  pnpm_10,
+  pnpm_11,
   pnpmConfigHook,
   python3,
   stdenv,
@@ -39,7 +39,7 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     makeWrapper
     nodejs_24
-    pnpm_10
+    pnpm_11
     pnpmConfigHook
     python3
     yq-go
@@ -51,7 +51,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   pnpmDeps = fetchPnpmDeps {
     inherit (finalAttrs) pname version src;
-    pnpm = pnpm_10;
+    pnpm = pnpm_11;
     fetcherVersion = 3;
     hash = "sha256-FHCinSPh6kFdL9N36ZDqhwrtLqNupxZqEwaznoaQpyQ=";
   };
