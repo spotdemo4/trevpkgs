@@ -115,7 +115,8 @@ lib.makeOverridable (
 
     srcPname = if isDrv && src ? pname then src.pname else null;
     srcVersion = if isDrv && src ? version then src.version else null;
-    srcMainProgram = if isDrv && src ? meta && src.meta ? mainProgram then src.meta.mainProgram else null;
+    srcMainProgram =
+      if isDrv && src ? meta && src.meta ? mainProgram then src.meta.mainProgram else null;
 
     # Parse Gleam metadata from gleam.toml at evaluation time
     gleamToml = fromTOML (builtins.readFile (srcPath + "/gleam.toml"));
@@ -147,11 +148,7 @@ lib.makeOverridable (
         srcVersion
       else
         gleamToml.version;
-    finalMainProgram =
-      if srcMainProgram != null then
-        srcMainProgram
-      else
-        finalPname;
+    finalMainProgram = if srcMainProgram != null then srcMainProgram else finalPname;
 
     currentTarget =
       let
