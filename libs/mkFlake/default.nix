@@ -269,7 +269,7 @@ eachSystemOp (
     else
       attrs
       // {
-        ${key} = (attrs.${key} or { }) // {
+        ${key} = (attrs.${key} or { }) // lib.optionalAttrs (!lib.isDerivation flake.${key} || lib.meta.availableOn packages.stdenv.hostPlatform flake.${key}) {
           ${system} = flake.${key};
         };
       }
