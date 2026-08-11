@@ -20,7 +20,6 @@ buildNpmPackage (final: {
 
   postConfigure = ''
     npm run prepare
-    cp node_modules/acorn/dist/acorn.mjs devtools-frontend/front_end/third_party/acorn/package/dist/
   '';
 
   npmBuildScript = "bundle";
