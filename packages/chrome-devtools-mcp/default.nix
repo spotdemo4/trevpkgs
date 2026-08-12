@@ -13,7 +13,8 @@ buildNpmPackage (final: {
     owner = "ChromeDevTools";
     repo = "chrome-devtools-mcp";
     rev = "chrome-devtools-mcp-v${final.version}";
-    hash = "sha256-pJgjxKrewRguMjXO9ocgX2q7s2v+WyiDhKgXTbM1Et4=";
+    hash = "sha256-NLm/YGoZXyKCnfoyp20hzNRHMe80ljUnq/Q2uXif/5A";
+    fetchSubmodules = true;
   };
 
   npmDepsHash = "sha256-sIgr/umxN6hMWbsHXU17VSXRp7b1ky55ds0A8dKHW00=";
