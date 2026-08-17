@@ -22,6 +22,7 @@
   nix-update-script,
   ocl-icd,
   opencl-headers,
+  pcre2,
   pkg-config,
   stdenv,
   vpl-gpu-rt,
@@ -63,6 +64,7 @@ stdenv.mkDerivation (finalAttrs: {
     glib.dev
     harfbuzz.dev
     libsysprof-capture
+    pcre2.dev
     libx11
     opencl-headers
     ocl-icd
