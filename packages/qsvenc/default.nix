@@ -56,7 +56,7 @@ stdenv.mkDerivation (finalAttrs: {
     libdrm
     ffmpeg # libavcodec, libavformat, etc
     libass
-    fontconfig
+    fontconfig.dev
     libx11
     opencl-headers
     ocl-icd
