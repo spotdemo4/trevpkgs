@@ -3,6 +3,7 @@
   cmrt,
   fetchFromGitHub,
   ffmpeg,
+  fontconfig,
   hdr10plus,
   intel-compute-runtime,
   intel-media-driver,
@@ -55,6 +56,7 @@ stdenv.mkDerivation (finalAttrs: {
     libdrm
     ffmpeg # libavcodec, libavformat, etc
     libass
+    fontconfig
     libx11
     opencl-headers
     ocl-icd
