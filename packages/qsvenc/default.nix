@@ -4,6 +4,7 @@
   fetchFromGitHub,
   ffmpeg,
   fontconfig,
+  harfbuzz,
   hdr10plus,
   intel-compute-runtime,
   intel-media-driver,
@@ -57,6 +58,7 @@ stdenv.mkDerivation (finalAttrs: {
     ffmpeg # libavcodec, libavformat, etc
     libass
     fontconfig.dev
+    harfbuzz.dev
     libx11
     opencl-headers
     ocl-icd
