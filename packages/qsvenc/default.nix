@@ -13,6 +13,7 @@
   libass,
   libdovi,
   libdrm,
+  libsysprof-capture,
   libva,
   libx11,
   makeWrapper,
@@ -23,7 +24,6 @@
   opencl-headers,
   pkg-config,
   stdenv,
-  sysprof,
   vpl-gpu-rt,
 }:
 
@@ -62,7 +62,7 @@ stdenv.mkDerivation (finalAttrs: {
     fontconfig.dev
     glib.dev
     harfbuzz.dev
-    sysprof.dev
+    libsysprof-capture
     libx11
     opencl-headers
     ocl-icd
