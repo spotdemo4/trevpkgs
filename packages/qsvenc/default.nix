@@ -25,7 +25,7 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "qsvenc";
-  version = "8.26";
+  version = "8.27";
 
   hardeningDisable = [ "all" ];
 
@@ -33,7 +33,7 @@ stdenv.mkDerivation (finalAttrs: {
     owner = "rigaya";
     repo = "QSVEnc";
     tag = finalAttrs.version;
-    hash = "sha256-q0dfSFd1OTve6yoyP3CsCl3UUniKU1694aRD/21sMk0=";
+    hash = "sha256-1WtgMuftxEXj6Vf+nvz+fm1PKQ+4XCvmEIHBkF4Q864=";
     fetchSubmodules = true;
   };
 
