@@ -4,6 +4,7 @@
   fetchFromGitHub,
   ffmpeg,
   fontconfig,
+  fribidi,
   glib,
   harfbuzz,
   hdr10plus,
@@ -61,6 +62,7 @@ stdenv.mkDerivation (finalAttrs: {
     ffmpeg # libavcodec, libavformat, etc
     libass
     fontconfig.dev
+    fribidi.dev
     glib.dev
     harfbuzz.dev
     libsysprof-capture
