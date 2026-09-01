@@ -87,6 +87,7 @@ buildPythonApplication {
 
   pythonRelaxDeps = [
     "boltons"
+    "click"
     "defusedxml"
     "exceptiongroup"
     "glom"
