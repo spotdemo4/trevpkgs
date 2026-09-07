@@ -83,7 +83,7 @@ stdenv.mkDerivation (finalAttrs: {
   postPatch = ''
     substituteInPlace meson.build \
       --replace-fail \
-        "run_command('git', 'describe', '--tags', '--abbrev=0', check: true).stdout().strip()" \
+        "run_command('sh', 'scripts/get-version.sh', check: true).stdout().strip()" \
         "'${finalAttrs.version}'"
   '';
 
