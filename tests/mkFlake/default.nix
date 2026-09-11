@@ -8,13 +8,21 @@ let
     _system: fixturePkgs:
     let
       canExecute = fixturePkgs.stdenv.buildPlatform.canExecute fixturePkgs.stdenv.hostPlatform;
-      goPure = fixturePkgs.protoc-gen-connect-openapi.overrideAttrs (old: {
+      pureGoAttrs = old: {
         env = (old.env or { }) // {
           CGO_ENABLED = 0;
         };
         doCheck = canExecute;
         ldflags = (old.ldflags or [ ]) ++ [ "-linkmode=internal" ];
-      });
+      };
+      goPure = fixturePkgs.protoc-gen-connect-openapi.overrideAttrs pureGoAttrs;
+      goVersionParts = fixturePkgs.lib.splitVersion fixturePkgs.go.version;
+      versionedGoBuilder = "buildGo${builtins.elemAt goVersionParts 0}${builtins.elemAt goVersionParts 1}Module";
+      goVersioned =
+        (fixturePkgs.protoc-gen-connect-openapi.override {
+          buildGoModule = fixturePkgs.${versionedGoBuilder};
+        }).overrideAttrs
+          pureGoAttrs;
       goCgo = fixturePkgs.flake-release.overrideAttrs (old: {
         env = (old.env or { }) // {
           CGO_ENABLED = 1;
@@ -28,6 +36,7 @@ let
         fix-hash = fixturePkgs.fix-hash;
         go-cgo = goCgo;
         go-pure = goPure;
+        go-versioned = goVersioned;
       };
     }
   );
@@ -142,6 +151,10 @@ in
   mkFlake-darwin-go-cgo = checkMachO "mkFlake-darwin-go-cgo" "${packages.go-cgo.${target}}/bin/flake-release";
 
   mkFlake-darwin-go-pure = checkMachO "mkFlake-darwin-go-pure" "${packages.go-pure.${target}}/bin/protoc-gen-connect-openapi";
+
+  mkFlake-darwin-go-versioned = checkMachO "mkFlake-darwin-go-versioned" "${
+    packages.go-versioned.${target}
+  }/bin/protoc-gen-connect-openapi";
 
   mkFlake-darwin-rust = checkMachO "mkFlake-darwin-rust" "${packages.fix-hash.${target}}/bin/fix-hash";
 }
