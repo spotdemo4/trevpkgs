@@ -7,6 +7,22 @@ let
     final: prev:
     let
       bootstrapAppleSdk = prev.apple-sdk.override { enableBootstrap = true; };
+      targetLibresolv = final.pkgsBuildTarget.targetPackages.darwin.libresolv;
+      # The bootstrap SDK omits libresolv, but Go builds its target standard
+      # library with cgo and invokes the target compiler outside stdenv hooks.
+      crossGo = prev.go.overrideAttrs (
+        old:
+        let
+          targetSuffix = lib.replaceStrings [ "-" ] [ "_" ] prev.stdenv.targetPlatform.config;
+        in
+        {
+          depsBuildTarget = (old.depsBuildTarget or [ ]) ++ [ targetLibresolv ];
+          env = (old.env or { }) // {
+            "NIX_CFLAGS_COMPILE_${targetSuffix}" = "-isystem ${lib.getDev targetLibresolv}/include";
+            "NIX_LDFLAGS_${targetSuffix}" = "-L${lib.getLib targetLibresolv}/lib";
+          };
+        }
+      );
       overrideBintools =
         llvmPackages:
         llvmPackages.overrideScope (
@@ -143,6 +159,11 @@ let
     in
     {
       apple-sdk = bootstrapAppleSdk;
+      go = crossGo;
+      # Rebind nixpkgs's default builder to the corrected default compiler.
+      buildGoModule = prev.buildGoModule.override {
+        go = final.buildPackages.go;
+      };
       llvmPackages = final.llvmPackages_21;
       llvmPackages_21 = overrideBintools prev.llvmPackages_21;
     };
@@ -155,9 +176,13 @@ let
       lib.isDerivation package
       && isLinuxToDarwin package.stdenv.buildPlatform package.stdenv.hostPlatform
       && lib.getName package != lib.getName packages.libiconv
+      && lib.getName package != lib.getName packages.darwin.libresolv
     then
       package.overrideAttrs (old: {
-        buildInputs = (old.buildInputs or [ ]) ++ [ packages.libiconv ];
+        buildInputs = (old.buildInputs or [ ]) ++ [
+          packages.libiconv
+          packages.darwin.libresolv
+        ];
       })
     else
       package;

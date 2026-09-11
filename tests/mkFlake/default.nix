@@ -5,10 +5,29 @@
 
 let
   fixture = self.libs.mkFlake (
-    _system: fixturePkgs: {
+    _system: fixturePkgs:
+    let
+      canExecute = fixturePkgs.stdenv.buildPlatform.canExecute fixturePkgs.stdenv.hostPlatform;
+      goPure = fixturePkgs.protoc-gen-connect-openapi.overrideAttrs (old: {
+        env = (old.env or { }) // {
+          CGO_ENABLED = 0;
+        };
+        doCheck = canExecute;
+        ldflags = (old.ldflags or [ ]) ++ [ "-linkmode=internal" ];
+      });
+      goCgo = fixturePkgs.flake-release.overrideAttrs (old: {
+        env = (old.env or { }) // {
+          CGO_ENABLED = 1;
+        };
+        doCheck = canExecute;
+      });
+    in
+    {
       packages = {
         inherit (fixturePkgs) fmt hello libiconv;
         fix-hash = fixturePkgs.fix-hash;
+        go-cgo = goCgo;
+        go-pure = goPure;
       };
     }
   );
@@ -119,5 +138,10 @@ in
       '';
 
   mkFlake-darwin-cxx = checkMachO "mkFlake-darwin-cxx" "${packages.fmt.${target}}/lib/libfmt.dylib";
+
+  mkFlake-darwin-go-cgo = checkMachO "mkFlake-darwin-go-cgo" "${packages.go-cgo.${target}}/bin/flake-release";
+
+  mkFlake-darwin-go-pure = checkMachO "mkFlake-darwin-go-pure" "${packages.go-pure.${target}}/bin/protoc-gen-connect-openapi";
+
   mkFlake-darwin-rust = checkMachO "mkFlake-darwin-rust" "${packages.fix-hash.${target}}/bin/fix-hash";
 }
