@@ -11,7 +11,7 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "kotlin-lsp";
-  version = "262.9593.0";
+  version = "263.4702.0";
 
   src =
     let
@@ -27,7 +27,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         aarch64-darwin = fetchzip {
           url = "https://download-cdn.jetbrains.com/language-server/kotlin-server/${finalAttrs.version}/kotlin-server-${finalAttrs.version}-aarch64.sit";
           extension = "zip";
-          hash = "sha256-qDS5nfZtxAaZUGlaxbcdP8nC1vxYYg1ynj+kwSwo37Q=";
+          hash = "sha256-tCzSMSy80GfxSWTahlsryuzECGZixSh2ufPFtP8bq/g=";
         };
       };
     in
