@@ -22,7 +22,7 @@ buildRustPackage (finalAttrs: {
     hash = "sha256-RDOTiKNbP1ZDvt4Ygjd/jx7OxHC+f+7gCw0jM2sQ4U4=";
   };
 
-  cargoHash = "sha256-1b8jt8/4m/AInLR2Rr0LVBDY2hhR/APzXg2UkoYOvyk=";
+  cargoHash = "sha256-U2J/sSmRakVbsCyJlvseX7mjs/WigzqnAHQcZseVFcI=";
 
   nativeBuildInputs = [
     pkg-config
