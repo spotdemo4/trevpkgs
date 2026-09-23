@@ -42,7 +42,7 @@ let
     };
     x86_64-linux = fetchurl {
       url = "https://github.com/opengrep/opengrep/releases/download/v${version}/opengrep-core_linux_x86.tar.gz";
-      hash = "sha256-KopsL4dUG5rwSjkC6ubhflqHhl8FsOrzlVpa4OR61DI=";
+      hash = "sha256-uTsoLV5pQbbsk4tJdOQb97skjrlRhYPbKO+4ND3XGKM=";
     };
     aarch64-darwin = fetchurl {
       url = "https://github.com/opengrep/opengrep/releases/download/v${version}/opengrep-core_osx_aarch64.tar.gz";
