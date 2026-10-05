@@ -15,6 +15,9 @@
   fetchSubmodules ? false,
   submodulePath ? "duckdb",
   loadOptions ? [ ],
+  loadableTarget ? "${name}_loadable_extension",
+  # C API extensions can only be loaded at runtime
+  linkable ? true,
   duckdbBuildInputs ? [ ],
   duckdbPostPatch ? "",
 }:
@@ -56,6 +59,8 @@ stdenvNoCC.mkDerivation {
       inherit
         name
         loadOptions
+        loadableTarget
+        linkable
         duckdbBuildInputs
         duckdbPostPatch
         ;
