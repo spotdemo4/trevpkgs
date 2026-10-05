@@ -18,6 +18,8 @@
   loadableTarget ? "${name}_loadable_extension",
   # C API extensions can only be loaded at runtime
   linkable ? true,
+  # other extensions (by attribute name) this extension loads
+  dependencies ? [ ],
   duckdbBuildInputs ? [ ],
   duckdbPostPatch ? "",
 }:
@@ -61,6 +63,7 @@ stdenvNoCC.mkDerivation {
         loadOptions
         loadableTarget
         linkable
+        dependencies
         duckdbBuildInputs
         duckdbPostPatch
         ;

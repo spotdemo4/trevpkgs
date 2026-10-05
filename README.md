@@ -72,7 +72,7 @@ pkgs.trev.duckdb.override {
 - out-of-tree: `withAvro`, `withAws`, `withAzure`, `withDucklake`, `withEncodings`, `withExcel`, `withFts`, `withHttpfs`, `withIceberg`, `withInet`, `withMysqlScanner`, `withOdbcScanner`, `withPostgresScanner`, `withQuack`, `withSpatial`, `withSqliteScanner`, `withSqlsmith`, `withVss`
 - drivers: `withJdbc`, `withOdbc`
 
-`avro`, `aws`, `azure`, `ducklake`, `excel`, `httpfs`, `iceberg`, `quack` and `sqlite_scanner` are compiled into the binary. The rest are built as loadable extensions against the default duckdb, so enabling them does not rebuild duckdb; the `duckdb` binary finds them through `DUCKDB_NIX_EXTENSION_DIRECTORIES`, which programs linking `libduckdb` can set to `duckdb.extensionDirectory`. `spatial`, `vss` and `odbc_scanner` are not autoloaded and need `LOAD`. Static builds (`pkgsStatic`) compile every extension into the binary, except `odbc_scanner` which is unsupported.
+Out-of-tree extensions are built as loadable extensions against the default duckdb, so enabling them does not rebuild duckdb; the `duckdb` binary finds them through `DUCKDB_NIX_EXTENSION_DIRECTORIES`, which programs linking `libduckdb` can set to `duckdb.extensionDirectory`. `spatial`, `vss` and `odbc_scanner` are not autoloaded and need `LOAD`. Static builds (`pkgsStatic`) compile every extension into the binary, except `odbc_scanner` which is unsupported.
 
 ### [ffmpeg-quality-metrics](https://github.com/slhck/ffmpeg-quality-metrics)
 

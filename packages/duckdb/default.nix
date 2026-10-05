@@ -97,7 +97,17 @@ let
   );
 
   extensions = callPackage ./extensions { };
-  externalExtensionDrvs =
+  # include the extensions each enabled extension loads, dependencies first
+  withDependencies =
+    drvs:
+    lib.unique (
+      lib.concatMap (
+        drv:
+        withDependencies (map (name: extensions.${name}) drv.passthru.duckdbExtension.dependencies)
+        ++ [ drv ]
+      ) drvs
+    );
+  externalExtensionDrvs = withDependencies (
     lib.optionals withAvro [ extensions.avro ]
     ++ lib.optionals withAws [ extensions.aws ]
     ++ lib.optionals withAzure [ extensions.azure ]
@@ -115,7 +125,8 @@ let
     ++ lib.optionals withSpatial [ extensions.spatial ]
     ++ lib.optionals withSqliteScanner [ extensions.sqlite-scanner ]
     ++ lib.optionals withSqlsmith [ extensions.sqlsmith ]
-    ++ lib.optionals withVss [ extensions.vss ];
+    ++ lib.optionals withVss [ extensions.vss ]
+  );
 
   externalExtensions = map (
     extension:
