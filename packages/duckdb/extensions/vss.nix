@@ -4,8 +4,8 @@
   name = "vss";
   repo = "duckdb-vss";
   branch = "v1.5-variegata";
-  rev = "b833341c8737fd3f3558c7720cc575ae8fc82598";
-  hash = "sha256-txtsTm3OGNDGI5jeMvy9JA7R6pzb22gy5ArxTVc2Usw=";
+  rev = "6264ee9162c3a08f85914783e8625d27fbce257b";
+  hash = "sha256-2wQWhopMCS6q+aoGO5lf42VeTvw+a3s0WROJsqV4v/k=";
   loadOptions = [ "DONT_LINK" ];
   duckdbPostPatch = ''
     substituteInPlace \
