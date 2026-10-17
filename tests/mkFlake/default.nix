@@ -58,7 +58,6 @@ let
     _system: fixturePkgs: {
       devShells = {
         available = fixturePkgs.mkShell { };
-        broken = throw "devShell failed to evaluate";
         unavailable = fixturePkgs.mkShell {
           meta.platforms = fixturePkgs.lib.platforms.darwin;
         };
