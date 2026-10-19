@@ -2,6 +2,7 @@
   buildNpmPackage,
   lib,
   fetchFromGitHub,
+  jq,
   nix-update-script,
 }:
 
@@ -17,7 +18,28 @@ buildNpmPackage (final: {
     fetchSubmodules = true;
   };
 
-  npmDepsHash = "sha256-45WnV46bFxnw6aoLsmoSk5N0KeJGB4osQLRBNbf59yI=";
+  # upstream doesn't always keep `resolved` in package-lock.json, which makes
+  # fetchNpmDeps skip those packages. derive the registry tarball url for any
+  # registry package that is missing one. postPatch is shared with fetchNpmDeps
+  # https://github.com/ChromeDevTools/chrome-devtools-mcp/issues/3219
+  postPatch = ''
+    ${lib.getExe jq} '
+      .packages |= with_entries(
+        if (.key | contains("node_modules/"))
+          and .value.resolved == null
+          and .value.integrity != null
+          and (.value.link | not)
+          and (.value.inBundle | not)
+        then
+          (.value.name // (.key | sub("^.*node_modules/"; ""))) as $name
+          | .value.resolved = "https://registry.npmjs.org/\($name)/-/\($name | sub("^@[^/]+/"; ""))-\(.value.version).tgz"
+        else . end
+      )
+    ' package-lock.json > package-lock.json.tmp
+    mv package-lock.json.tmp package-lock.json
+  '';
+
+  npmDepsHash = "sha256-CedK4xMCGLnryGL+dve2S1OYtetlr7/wg/pnpMBy5IQ=";
 
   postConfigure = ''
     npm run prepare
