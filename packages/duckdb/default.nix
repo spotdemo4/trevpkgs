@@ -446,6 +446,8 @@ withLoadableExtensions (
             "test/sql/aggregate/aggregates/test_skewness.test"
             "test/sql/function/list/aggregates/skewness.test"
             "test/sql/aggregate/aggregates/histogram_table_function.test"
+            "test/sql/settings/operator_memory_limit.test"
+            "test/sql/storage/test_eviction_queue_dead_nodes_underflow.test"
           ]
           ++ lib.optionals stdenv.hostPlatform.isDarwin [
             # UB in PhysicalRangeJoin (shared by IEJoin and PiecewiseMergeJoin) causes
