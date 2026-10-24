@@ -8,13 +8,13 @@
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "zig-protobuf";
-  version = "6.0.0";
+  version = "6.0.1";
 
   src = fetchFromGitHub {
     owner = "Arwalk";
     repo = "zig-protobuf";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-D3xTXCqxM/Hpcx/9ZLFHciLjpguZlvv18x7rU9Ssds4=";
+    hash = "sha256-c5EVhghAC93j7W6Wa5JDkQJebi1Z0s/ieyVPKsFPIHk=";
   };
 
   postPatch = ''
