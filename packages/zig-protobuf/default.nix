@@ -23,32 +23,18 @@ stdenv.mkDerivation (finalAttrs: {
       'const include = b.path("");'
   '';
 
-  zigDeps =
-    (zig.fetchDeps {
-      inherit (finalAttrs) src pname version;
-      hash = "sha256-r0xm3EUduf0lUXrCMBm0TFYnRn9uRK0maVGhMrs7rMk=";
-      fetchAll = true;
-    }).overrideAttrs
-      (oldAttrs: {
-        buildCommand =
-          lib.replaceStrings
-            [ "export ZIG_GLOBAL_CACHE_DIR=$(mktemp -d)\n" ]
-            [
-              ''
-                export ZIG_GLOBAL_CACHE_DIR=$(mktemp -d)
-                mkdir -p "$ZIG_GLOBAL_CACHE_DIR/tmp"
-              ''
-            ]
-            oldAttrs.buildCommand;
-      });
+  zigDeps = zig.fetchDeps {
+    inherit (finalAttrs) src pname version;
+    hash = "sha256-r0xm3EUduf0lUXrCMBm0TFYnRn9uRK0maVGhMrs7rMk=";
+    fetchAll = true;
+  };
+
+  postConfigure = ''
+    ln -s ${finalAttrs.zigDeps} "$ZIG_GLOBAL_CACHE_DIR/p"
+  '';
 
   nativeBuildInputs = [
     zig.hook
-  ];
-
-  zigBuildFlags = [
-    "--system"
-    "${finalAttrs.zigDeps}"
   ];
 
   passthru.updateScript = nix-update-script {
