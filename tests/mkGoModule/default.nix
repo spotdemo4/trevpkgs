@@ -93,7 +93,7 @@ let
     proxyVendor = true;
   };
 
-  # go can't build static PIE binaries
+  # go's own linker can't build static PIE binaries
   withoutCgo = mkFixture {
     env.CGO_ENABLED = 0;
   };
@@ -102,7 +102,18 @@ let
     pie = false;
   };
 
+  # static PIE binaries, linked by the external linker
   static = testPkgs.pkgsStatic.mkGoModule fixtureArgs;
+
+  staticAarch64 = testPkgs.pkgsCross.aarch64-multiplatform-musl.pkgsStatic.mkGoModule {
+    inherit (fixtureArgs)
+      pname
+      version
+      src
+      vendorHash
+      subPackages
+      ;
+  };
 
   # buildGoModule defaults to go's platforms, which don't include windows
   windows = testPkgs.pkgsCross.mingwW64.mkGoModule {
@@ -125,6 +136,9 @@ let
     version = "1.0.0";
     inherit src;
   };
+
+  # readelf, to check for an interpreter
+  elfTools = testPkgs.lib.optional testPkgs.stdenv.hostPlatform.isLinux testPkgs.binutils;
 
   # without dependencies there's no vendor directory to build a cache from
   nodeps = testPkgs.mkGoModule {
@@ -156,10 +170,10 @@ assert fixture.pie == testPkgs.stdenv.hostPlatform.isLinux;
 assert fixture.goCache.pie == fixture.pie;
 assert !withoutPie.goCache.pie;
 assert !(fixture.overrideAttrs { pie = false; }).goCache.pie;
-assert !static.pie;
+assert static.pie == testPkgs.stdenv.hostPlatform.isLinux;
 assert !windows.pie;
 {
-  mkGoModule-build = testPkgs.runCommand "mkGoModule-build" { } ''
+  mkGoModule-build = testPkgs.runCommand "mkGoModule-build" { nativeBuildInputs = elfTools; } ''
     test "$(${fixture}/bin/fixture)" = "hello from dep"
     test "$(${bumped}/bin/fixture)" = "hello from dep"
     test "$(${renamed}/bin/renamed)" = "hello from dep"
@@ -175,6 +189,22 @@ assert !windows.pie;
       test "$(elfType ${fixture}/bin/fixture)" = 3
       test "$(elfType ${withoutCgo}/bin/fixture)" = 2
       test "$(elfType ${withoutPie}/bin/fixture)" = 2
+
+      # static PIE binaries don't have an interpreter
+      isStaticPie() {
+        test "$(elfType "$1")" = 3 || return 1
+        local headers
+        # exits even when called as a condition
+        headers=$(readelf -lW "$1") || exit 1
+        [[ $headers != *INTERP* ]]
+      }
+      test "$(${static}/bin/fixture)" = "hello from dep"
+      isStaticPie ${static}/bin/fixture
+      isStaticPie ${staticAarch64}/bin/fixture
+      if isStaticPie ${fixture}/bin/fixture; then
+        echo "dynamically linked binaries were detected as static PIE" >&2
+        exit 1
+      fi
     ''}
     touch $out
   '';

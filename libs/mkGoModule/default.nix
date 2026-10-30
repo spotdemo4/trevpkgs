@@ -18,9 +18,10 @@
 # renamed to match.
 #
 # On Linux, binaries are built as position-independent executables
-# (`-buildmode=pie`) for ASLR when cgo is enabled. Go can't build static PIE
-# binaries, so on static platforms or with CGO_ENABLED=0 they're left static.
-# `pie = false` disables it.
+# (`-buildmode=pie`) for ASLR when cgo is enabled. On static platforms they're
+# linked as static PIE binaries by the external linker. With CGO_ENABLED=0 go's
+# own linker is used, which can't build static PIE binaries, so they're left
+# static. `pie = false` disables it.
 {
   buildGoModule,
   callPackage,
@@ -107,6 +108,13 @@ let
   setBuildMode = ''
     if [ -n "''${pie-}" ] && [ "''${CGO_ENABLED-}" != 0 ]; then
       export GOFLAGS="$GOFLAGS -buildmode=pie"
+      ${lib.optionalString stdenv.hostPlatform.isStatic ''
+        # go's linker would need a dynamic loader for PIE binaries, and with the
+        # static stdenv's -static gcc uses the startup files for non-PIE ones
+        ldflags+=(-linkmode=external)
+        NIX_CFLAGS_LINK=" ''${NIX_CFLAGS_LINK-} "
+        export NIX_CFLAGS_LINK="''${NIX_CFLAGS_LINK// -static / -static-pie }"
+      ''}
     fi
   '';
 
@@ -152,10 +160,7 @@ lib.extendMkDerivation {
       # extra arguments for the dependency derivation
       goCacheArgs ? { },
       # position-independent executables, only used with cgo
-      pie ?
-        stdenv.hostPlatform.isLinux
-        && !stdenv.hostPlatform.isStatic
-        && lib.elem stdenv.hostPlatform.go.GOARCH pieArchs,
+      pie ? stdenv.hostPlatform.isLinux && lib.elem stdenv.hostPlatform.go.GOARCH pieArchs,
       ...
     }@args:
 
