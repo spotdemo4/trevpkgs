@@ -23,7 +23,10 @@ let
 in
 
 dockerTools.buildLayeredImage (
-  (removeAttrs args [ "src" ])
+  (removeAttrs args [
+    "src"
+    "revision"
+  ])
   // {
     name = args.name or package.pname;
     tag = args.tag or package.version;
