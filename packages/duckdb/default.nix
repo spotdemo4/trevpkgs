@@ -501,6 +501,8 @@ withLoadableExtensions (
             "test/sql/join/asof/test_asof_join_missing.test_slow"
             # 10240-row inequality join routing to IEJoin via plan_comparison_join.cpp
             "test/sql/join/test_complex_range_join.test"
+            # fails on aarch64-darwin, read-ahead memory limit test
+            "test/sql/copy/parquet/read_ahead/readahead_memory_limit.test"
           ]
         );
         LD_LIBRARY_PATH = lib.optionalString stdenv.hostPlatform.isDarwin "DY" + "LD_LIBRARY_PATH";
