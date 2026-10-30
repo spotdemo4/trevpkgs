@@ -44,7 +44,8 @@ dockerTools.buildLayeredImage (
             package.meta.longDescription or package.meta.description or null;
           "org.opencontainers.image.version" = package.version or null;
           "org.opencontainers.image.url" = package.meta.homepage or null;
-          "org.opencontainers.image.source" = package.meta.downloadPage or package.meta.homepage or null;
+          "org.opencontainers.image.source" = package.src.meta.homepage or package.meta.homepage or null;
+          "org.opencontainers.image.revision" = args.revision or package.src.rev or null;
           "org.opencontainers.image.licenses" = package.meta.license.spdxId or null;
         };
     };
