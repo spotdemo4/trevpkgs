@@ -16,6 +16,11 @@
 # Go names binaries after their package's directory (or module path), so when
 # `meta.mainProgram` is set and the package installs a single binary, it's
 # renamed to match.
+#
+# On Linux, binaries are built as position-independent executables
+# (`-buildmode=pie`) for ASLR when cgo is enabled. Go can't build static PIE
+# binaries, so on static platforms or with CGO_ENABLED=0 they're left static.
+# `pie = false` disables it.
 {
   buildGoModule,
   callPackage,
@@ -84,6 +89,27 @@ let
     "version"
   ];
 
+  # architectures go supports -buildmode=pie on for linux
+  pieArchs = [
+    "386"
+    "amd64"
+    "arm"
+    "arm64"
+    "loong64"
+    "ppc64le"
+    "riscv64"
+    "s390x"
+  ];
+
+  # GOFLAGS can't be passed to buildGoModule, so the build mode is added in the
+  # shell. CGO_ENABLED is checked there so overriding it is respected: without
+  # cgo go can't use an external linker, and its own can't link PIE everywhere.
+  setBuildMode = ''
+    if [ -n "''${pie-}" ] && [ "''${CGO_ENABLED-}" != 0 ]; then
+      export GOFLAGS="$GOFLAGS -buildmode=pie"
+    fi
+  '';
+
   stripHash =
     name:
     if builtins.match "[0-9a-z]{32}-.*" name != null then builtins.substring 33 (-1) name else name;
@@ -125,6 +151,11 @@ lib.extendMkDerivation {
       overrideModAttrs ? (finalAttrs: previousAttrs: { }),
       # extra arguments for the dependency derivation
       goCacheArgs ? { },
+      # position-independent executables, only used with cgo
+      pie ?
+        stdenv.hostPlatform.isLinux
+        && !stdenv.hostPlatform.isStatic
+        && lib.elem stdenv.hostPlatform.go.GOARCH pieArchs,
       ...
     }@args:
 
@@ -167,6 +198,7 @@ lib.extendMkDerivation {
               # go.mod has to be consistent with vendor/modules.txt, which lists the
               # explicit requirements, replacements and go versions
               postConfigure = ''
+                ${setBuildMode}
                 awk '
                   BEGIN { print "module nix-go-deps\n\ngo ${lib.versions.majorMinor finalAttrs.passthru.go.version}\n" }
                   /^# / {
@@ -244,6 +276,9 @@ lib.extendMkDerivation {
                 # use the main derivation's vendor directory, so its source isn't needed
                 inherit (finalAttrs) goModules vendorHash;
 
+                # the build mode changes how packages are compiled
+                inherit (finalAttrs) pie;
+
                 # the cache can contain store paths, e.g. of go when built without -trimpath
                 disallowedReferences = [ ];
               }
@@ -252,6 +287,8 @@ lib.extendMkDerivation {
     in
     {
       goCache = args.goCache or goCache;
+
+      inherit pie;
 
       # buildGoModule only copies `goModules` with a vendorHash, the derivation it
       # would use is replaced (see transformDrv)
@@ -266,6 +303,7 @@ lib.extendMkDerivation {
       nativeBuildInputs = nativeBuildInputs ++ [ zstd ];
 
       postConfigure = ''
+        ${setBuildMode}
         if [ -n "''${goCache-}" ]; then
           echo "Restoring go build cache from $goCache"
           mkdir -p "$GOCACHE"

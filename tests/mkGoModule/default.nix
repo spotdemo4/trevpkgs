@@ -93,6 +93,17 @@ let
     proxyVendor = true;
   };
 
+  # go can't build static PIE binaries
+  withoutCgo = mkFixture {
+    env.CGO_ENABLED = 0;
+  };
+
+  withoutPie = mkFixture {
+    pie = false;
+  };
+
+  static = testPkgs.pkgsStatic.mkGoModule fixtureArgs;
+
   # buildGoModule defaults to go's platforms, which don't include windows
   windows = testPkgs.pkgsCross.mingwW64.mkGoModule {
     pname = "fixture";
@@ -141,6 +152,12 @@ assert modules.goModules.outPath == modulesBumped.goModules.outPath;
 assert modules.goCache.outPath == modulesBumped.goCache.outPath;
 assert modules.outPath != modulesBumped.outPath;
 assert !(builtins.tryEval withoutHash.drvPath).success;
+assert fixture.pie == testPkgs.stdenv.hostPlatform.isLinux;
+assert fixture.goCache.pie == fixture.pie;
+assert !withoutPie.goCache.pie;
+assert !(fixture.overrideAttrs { pie = false; }).goCache.pie;
+assert !static.pie;
+assert !windows.pie;
 {
   mkGoModule-build = testPkgs.runCommand "mkGoModule-build" { } ''
     test "$(${fixture}/bin/fixture)" = "hello from dep"
@@ -152,6 +169,13 @@ assert !(builtins.tryEval withoutHash.drvPath).success;
     test "$(${modulesBumped}/bin/fixture)" = "hello from dep"
     # the same as `go mod vendor`
     diff ${fixture.goModules}/modules.txt ${modules.goModules}/modules.txt
+    ${testPkgs.lib.optionalString testPkgs.stdenv.hostPlatform.isLinux ''
+      # the ELF type, 3 for position-independent executables and 2 for others
+      elfType() { od -An -tu1 -j16 -N1 "$1" | tr -d ' '; }
+      test "$(elfType ${fixture}/bin/fixture)" = 3
+      test "$(elfType ${withoutCgo}/bin/fixture)" = 2
+      test "$(elfType ${withoutPie}/bin/fixture)" = 2
+    ''}
     touch $out
   '';
 }
