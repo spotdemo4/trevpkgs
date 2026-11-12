@@ -54,7 +54,7 @@ buildPythonPackage rec {
   ];
 
   postPatch = ''
-    sed -i 's/requires = \["setuptools~=.*", "wheel"]/requires = ["setuptools", "wheel"]/' pyproject.toml
+    sed -i 's/requires = \["setuptools[^"]*", "wheel"]/requires = ["setuptools", "wheel"]/' pyproject.toml
     sed -i '/"types-certifi"/d' pyproject.toml
     sed -i '/"types-toml"/d' pyproject.toml
   '';
