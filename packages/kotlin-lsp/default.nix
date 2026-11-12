@@ -15,7 +15,7 @@
 let
   # EAP builds stop working 30 days after this UTC build date,
   # from idea/IntelliJServerApplicationInfo.xml in lib/language-server.main.jar
-  buildDate = "202610140421";
+  buildDate = "202611031640";
 
   # converts a UTC "YYYYMMDDhhmm" timestamp to seconds since the epoch
   toEpoch =
@@ -55,7 +55,7 @@ let
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "kotlin-lsp";
-  version = "263.7084.0";
+  version = "271.2085.0";
 
   src =
     let
@@ -66,7 +66,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         };
         aarch64-linux = fetchzip {
           url = "https://download.jetbrains.com/language-server/kotlin-server/${finalAttrs.version}/kotlin-server-${finalAttrs.version}-aarch64.tar.gz";
-          hash = "sha256-gxv8v1/zSQO9EPD7S1YA/2igI809uq/tah8AVdCKNds=";
+          hash = "sha256-gGQ1WrTurM9uE3RmzabCAHiTLTEgUVO3hgvH5ft9IXM=";
         };
         aarch64-darwin = fetchzip {
           url = "https://download.jetbrains.com/language-server/kotlin-server/${finalAttrs.version}/kotlin-server-${finalAttrs.version}-aarch64.sit";
