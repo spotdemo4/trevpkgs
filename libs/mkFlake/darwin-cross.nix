@@ -165,11 +165,30 @@ let
             libunwind = crossLibunwind;
           }
         );
+      # nixpkgs drops libresolv from the SDK in favor of its own build, whose
+      # install name is its store path. Binaries linked against it (including Go
+      # binaries, which pass -lresolv to the external linker) would then fail to
+      # load on Macs without Nix, so point it at the ABI-compatible system copy.
+      fixLibresolv =
+        libresolv:
+        libresolv.overrideAttrs (old: {
+          postFixup = (old.postFixup or "") + ''
+            ${prev.stdenv.cc.targetPrefix}install_name_tool \
+              -id /usr/lib/libresolv.9.dylib "''${!outputLib}/lib/libresolv.9.dylib"
+          '';
+        });
     in
     lib.optionalAttrs involvesDarwin {
       apple-sdk = bootstrapAppleSdk;
       llvmPackages = final.llvmPackages_21;
       llvmPackages_21 = overrideBintools prev.llvmPackages_21;
+    }
+    // lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
+      darwin = prev.darwin.overrideScope (
+        _darwinFinal: darwinPrev: {
+          libresolv = fixLibresolv darwinPrev.libresolv;
+        }
+      );
     };
 
   goOverlay =
