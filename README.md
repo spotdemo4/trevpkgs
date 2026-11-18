@@ -516,6 +516,32 @@ checks = pkgs.mkChecks {
 };
 ```
 
+Checks can be grouped into their own files. A path to a `.nix` file (or a directory containing `checks.nix`) adds each check in that file, prefixed with the group's name. Check files are called like [`callPackage`](https://nix.dev/tutorials/callpackage.html), so they can ask for anything in `pkgs` (including `pkgs` itself), and can contain more groups. Use `callChecks` to pass arguments that aren't in `pkgs`:
+
+```nix
+checks = pkgs.mkChecks {
+  # node-eslint, node-prettier
+  node = ./web/checks.nix;
+
+  # rust-test, ... from ./rust/checks.nix
+  rust = pkgs.callChecks ./rust { inherit self; };
+};
+```
+
+```nix
+# ./rust/checks.nix
+{
+  pkgs,
+  self,
+}:
+{
+  test = {
+    src = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    script = "cargo test --offline";
+  };
+}
+```
+
 ### mkApps
 
 Utility function to simplify creating flake [apps](https://nix.dev/manual/nix/latest/command-ref/new-cli/nix3-run.html).
