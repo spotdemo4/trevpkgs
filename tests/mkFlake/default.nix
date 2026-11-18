@@ -313,5 +313,25 @@ in
       "${packages.go-pure.${target}}/bin/protoc-gen-connect-openapi"
       [ ];
 
+  # go's internal linker records every library with version 0.0.0, while lld
+  # copies the versions from the SDK stubs
+  mkFlake-darwin-go-pure-internal =
+    pkgs.runCommand "mkFlake-darwin-go-pure-internal"
+      {
+        nativeBuildInputs = [ pkgs.llvmPackages_21.llvm ];
+      }
+      ''
+        dylibs=$(llvm-objdump --macho --dylibs-used \
+          ${packages.go-pure.${target}}/bin/protoc-gen-connect-openapi | tail -n +2)
+        echo "$dylibs"
+
+        if grep -vF "(compatibility version 0.0.0, current version 0.0.0)" <<< "$dylibs"; then
+          echo "expected the binary to be linked by go's internal linker" >&2
+          exit 1
+        fi
+
+        touch $out
+      '';
+
   mkFlake-darwin-rust = checkMachO "mkFlake-darwin-rust" "${packages.fix-hash.${target}}/bin/fix-hash";
 }

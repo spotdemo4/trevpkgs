@@ -201,11 +201,16 @@ let
 
       # The bootstrap SDK omits libresolv, but Go builds its target standard
       # library with cgo and invokes the target compiler outside stdenv hooks.
+      #
+      # nixpkgs makes cross toolchains link externally whenever cgo is enabled,
+      # since go's internal linker can't pick an ELF interpreter. Mach-O has no
+      # interpreter, so go chooses like upstream: pure go binaries are linked
+      # internally and only reference system libraries by their fixed paths.
       fixGo =
         goCompiler:
         goCompiler.overrideAttrs (old: {
           depsBuildTarget = (old.depsBuildTarget or [ ]) ++ [ targetLibresolv ];
-          env = (old.env or { }) // {
+          env = removeAttrs (old.env or { }) [ "GO_EXTLINK_ENABLED" ] // {
             "NIX_CFLAGS_COMPILE_${targetSuffix}" = "-isystem ${lib.getDev targetLibresolv}/include";
             "NIX_LDFLAGS_${targetSuffix}" = "-L${lib.getLib targetLibresolv}/lib";
           };
