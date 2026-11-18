@@ -175,6 +175,14 @@ let
     mkChecks-group-args = testPkgs.callChecks ./group-args.nix { message = "hello"; };
   };
 
+  # mkCheck builds a single check without mkChecks
+  individual = testPkgs.mkCheck "mkCheck-individual" {
+    packages = [ (command "mkcheck-individual-command") ];
+    script = ''
+      test "$(mkcheck-individual-command)" = mkcheck-individual-command
+    '';
+  };
+
   # names are flattened, so a group can collide with another check
   collision = testPkgs.mkChecks {
     group-script.script = "true";
@@ -214,8 +222,11 @@ assert
 assert checks.mkChecks-group-file-script.name == "mkChecks-group-file-script";
 assert checks.mkChecks-group-file-derivation.name == "mkchecks-group-file-derivation";
 assert !(builtins.tryEval collision.group-script).success;
+assert individual.name == "mkCheck-individual";
 checks
 // {
+  mkCheck-individual = individual;
+
   mkChecks-src-derivation-cross-failure =
     testPkgs.runCommand "mkChecks-src-derivation-cross-failure" { }
       ''

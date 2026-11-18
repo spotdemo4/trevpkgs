@@ -478,7 +478,7 @@ appimages.default = pkgs.mkAppImage {
 nix build .#appimages.x86_64-linux.default
 ```
 
-### mkChecks
+### mkChecks & mkCheck
 
 Utility function to simplify creating flake [checks](https://nix.dev/manual/nix/latest/command-ref/new-cli/nix3-flake-check.html). Can take an `src` pointing to a derivation, a `root` pointing to a directory, or neither for checks that do not need a source.
 
@@ -539,6 +539,19 @@ checks = pkgs.mkChecks {
     src = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
     script = "cargo test --offline";
   };
+}
+```
+
+`mkCheck` builds a single check, taking the same attributes as an entry in `mkChecks`:
+
+```nix
+pkgs.mkCheck "shellcheck" {
+  root = ./.;
+  filter = file: file.hasExt "sh";
+  packages = [ pkgs.shellcheck ];
+  script = ''
+    shellcheck "$file"
+  '';
 }
 ```
 

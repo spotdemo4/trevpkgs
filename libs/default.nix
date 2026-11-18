@@ -15,7 +15,8 @@ let
     getForgejoFlake = pkgs.callPackage ./getForgejoFlake { };
     mkAppImage = pkgs.callPackage ./mkAppImage { };
     mkApps = pkgs.callPackage ./mkApps { };
-    mkChecks = pkgs.callPackage ./mkChecks { inherit (libs) callChecks; };
+    mkCheck = pkgs.callPackage ./mkCheck { };
+    mkChecks = pkgs.callPackage ./mkChecks { inherit (libs) callChecks mkCheck; };
     mkFlake = pkgs.callPackage ./mkFlake { };
     mkGleamBurrito = pkgs.callPackage ./mkGleamBurrito { };
     mkGleamPackage = pkgs.callPackage ./mkGleamPackage { };
