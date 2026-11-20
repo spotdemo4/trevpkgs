@@ -10,4 +10,4 @@ require (
 replace example.com/dep => ./dep
 
 // a version replacement, to test how it's vendored
-replace github.com/google/uuid => github.com/google/uuid v1.5.0
+replace github.com/google/uuid => github.com/google/uuid v1.6.0
