@@ -6,7 +6,7 @@
 (callPackage ./generic.nix { }) {
   name = "ducklake";
   repo = "ducklake";
-  rev = "417a9117f590e8141742ac0579d02f6a90162e37";
-  hash = "sha256-CfGNeFJlTjLS5/2GEg4EU8Ph9I8mLPax96wCNOIrgZk=";
+  rev = "08089b16dc8a18ce04abb6efd87e25cb4d64803a";
+  hash = "sha256-T4XA2TrADtdhW3axrn5nytWEC27QeBYDXFReergDm2c=";
   duckdbBuildInputs = [ croaring ];
 }
