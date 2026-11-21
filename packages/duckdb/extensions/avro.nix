@@ -9,8 +9,8 @@
 (callPackage ./generic.nix { }) {
   name = "avro";
   repo = "duckdb-avro";
-  rev = "758fb6063cbb6da49b2e1c16c4044cfcafefc52f";
-  hash = "sha256-apH/rqm9mAhpRrXJSb5t8pcCauHoWMi0tz53SYlmymo=";
+  rev = "4176191c961fe5c0763976b8b869e30ba0e93054";
+  hash = "sha256-cPiXl3x8vcC2bkZgPiYX4iePUEi25nZuZet2A0yJ8RI=";
   # avro-c is built from the third_party/avro-c submodule
   fetchSubmodules = true;
   duckdbBuildInputs = [
