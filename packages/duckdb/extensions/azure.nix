@@ -145,8 +145,8 @@ in
 (callPackage ./generic.nix { }) {
   name = "azure";
   repo = "duckdb-azure";
-  rev = "906e92458c33309e5d9413e14a85aad7b4d2275f";
-  hash = "sha256-UJBf8lsJqaRpIwqR9+tGpVx3h5OjLiPAbgZl6L5Hemw=";
+  rev = "bf93a0af8f28fff67c0084c438d20124fd810948";
+  hash = "sha256-7cdGLJF5B/4dmLXFNfO8KSBPHdBFgL9F3ng8qbJONkM=";
   duckdbBuildInputs = [
     azure-identity-cpp
     azure-storage-blobs-cpp

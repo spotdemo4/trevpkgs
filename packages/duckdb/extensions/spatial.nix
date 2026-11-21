@@ -13,8 +13,8 @@
 (callPackage ./generic.nix { }) {
   name = "spatial";
   repo = "duckdb-spatial";
-  rev = "4e066c17e2d1f24625baff4c62430d68ceb4e41f";
-  hash = "sha256-bhLRwuN8SfW1oDCaiRpdZDh3kTSndiPs+sHoXQ+MSrc=";
+  rev = "37bff11aea111375eca0acad7b37a7ac41896af9";
+  hash = "sha256-JRk2oj0XJ9S1Mt60TtnIvQxZhOcrgZPDpMIDTFhy5HA=";
   loadOptions = [
     "SOURCE_DIR \${PROJECT_SOURCE_DIR}/extension_external/spatial"
     "INCLUDE_DIR \${PROJECT_SOURCE_DIR}/extension_external/spatial/src/spatial"

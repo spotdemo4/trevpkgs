@@ -293,13 +293,13 @@ in
 withLoadableExtensions (
   stdenv.mkDerivation (finalAttrs: {
     pname = "duckdb";
-    version = "2.0.0";
+    version = "2.0.1";
 
     src = fetchFromGitHub {
       owner = "duckdb";
       repo = "duckdb";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-1fhgPD/QGT/fK+BabX2dbTWOsajS6feNl5+9iw8rvwU=";
+      hash = "sha256-DJx1RsCwTIhuoSaNfqUIpDIkQ3YIOYbvGTgufBTalmk=";
     };
 
     outputs = [
