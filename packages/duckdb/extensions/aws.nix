@@ -8,8 +8,8 @@
 (callPackage ./generic.nix { }) {
   name = "aws";
   repo = "duckdb-aws";
-  rev = "16ae9c135300f750478d648c2496f2952a6f2827";
-  hash = "sha256-YjOMPH2jdQ8s8VYXM+lhhvx0Lbp4KT/YVc5Yg67w3mI=";
+  rev = "1b96925856ded7c9cbde7403fdb3d467d0cdf779";
+  hash = "sha256-SQs9ywEBTKAX3sy2R0y3h6SAP9TjARGiAyUzMCHLFiA=";
   duckdbBuildInputs = [
     aws-sdk-cpp
     curl
