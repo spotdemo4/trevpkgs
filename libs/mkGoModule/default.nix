@@ -1,6 +1,6 @@
-# Wraps buildGoModule, building the dependencies in a separate derivation
-# (`goCache`) and restoring its build cache, so that source changes only
-# rebuild the main module's packages.
+# Wraps buildGoModule (with go-latest, see ../default.nix), building the
+# dependencies in a separate derivation (`goCache`) and restoring its build
+# cache, so that source changes only rebuild the main module's packages.
 #
 # The dependency derivation only uses the vendor directory, so it doesn't change
 # with the source or version. Go's build cache is content-addressed, entries are
