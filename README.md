@@ -642,7 +642,7 @@ Either `vendorHash` or `modules` is required. `modules` points to a `gomod2nix.t
 
 Dependencies of tests are cached for the build directory used on Linux, on Darwin they're rebuilt in the check phase.
 
-It's built with [`go-latest`](#go-latest).
+It's built with [`go-latest`](#go-latest), `go` replaces it, e.g. with `pkgs.trev.go_1_26-latest` or `pkgs.go_1_26`. It can't depend on `finalAttrs`, and like nixpkgs' builders it runs on the build platform, so use `pkgs.buildPackages` when cross compiling.
 
 Go names binaries after their package's directory, so when `meta.mainProgram` is set and a single binary is installed, it's renamed to `meta.mainProgram`.
 
@@ -662,6 +662,7 @@ pkgs.mkGoModule (finalAttrs: {
   version = "1.0.0";
   src = ./.;
   modules = ./gomod2nix.toml;
+  go = pkgs.trev.go_1_26-latest;
 });
 ```
 
