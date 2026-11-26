@@ -66,7 +66,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
         };
         aarch64-linux = fetchzip {
           url = "https://download.jetbrains.com/language-server/kotlin-server/${finalAttrs.version}/kotlin-server-${finalAttrs.version}-aarch64.tar.gz";
-          hash = "sha256-gGQ1WrTurM9uE3RmzabCAHiTLTEgUVO3hgvH5ft9IXM=";
+          hash = "sha256-noXfn0iWYirdMIqamJeyYWXqRS8r+EB0FbpHx1dhPw4=";
         };
         aarch64-darwin = fetchzip {
           url = "https://download.jetbrains.com/language-server/kotlin-server/${finalAttrs.version}/kotlin-server-${finalAttrs.version}-aarch64.sit";
