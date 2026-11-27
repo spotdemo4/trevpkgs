@@ -1,6 +1,5 @@
 {
   callPackage,
-  lib,
   unixodbc,
 }:
 
@@ -14,10 +13,6 @@
   linkable = false;
   duckdbBuildInputs = [ unixodbc ];
   duckdbPostPatch = ''
-    substituteInPlace extension_external/odbc_scanner/CMakeLists.txt \
-      --replace-fail '/opt/homebrew/opt/unixodbc/lib;/usr/local/opt/unixodbc/lib;/opt/local/lib' \
-        '${lib.getLib unixodbc}/lib'
-
     python3 - <<'PY'
     from pathlib import Path
 
