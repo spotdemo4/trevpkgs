@@ -6,8 +6,8 @@
 (callPackage ./generic.nix { }) {
   name = "postgres_scanner";
   repo = "duckdb-postgres";
-  rev = "c0f5a3c0c4b68b02afbf669d36d7f0e503985c88";
-  hash = "sha256-redRKplI5rkMqb+oclVVJRofcWiS2cXH7qV5BCGkKEI=";
+  rev = "8b9d0bbe8de4c57fb90d9e2530f9ce39f8c4baf3";
+  hash = "sha256-a5Tej/FckRXjDF66CDee9XNixFARm9ZvFht1+xy8Xzs=";
   fetchSubmodules = true;
   duckdbBuildInputs = [ libpq ];
 }

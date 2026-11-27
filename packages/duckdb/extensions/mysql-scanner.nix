@@ -14,8 +14,8 @@ in
 (callPackage ./generic.nix { }) {
   name = "mysql_scanner";
   repo = "duckdb-mysql";
-  rev = "f7fc0d42716534aa5ad48626d21ced9807b33967";
-  hash = "sha256-pTZua/YlpapRAHwJzN0eAuueh7KhF5HknuRULt60rHA=";
+  rev = "e04d8eef94c94e70c5d5663895610b1bb475d506";
+  hash = "sha256-lI67XFkJSnKX4ZIjp4LWfH6OrimBptcnmTU1KGd6/gA=";
   fetchSubmodules = true;
   duckdbBuildInputs = [
     mariadb-connector-c

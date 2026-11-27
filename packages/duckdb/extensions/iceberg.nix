@@ -9,8 +9,8 @@
 (callPackage ./generic.nix { }) {
   name = "iceberg";
   repo = "duckdb-iceberg";
-  rev = "4c0c0874c48ec82a3e29910554891d04bcc0e988";
-  hash = "sha256-zwhf6ePplnWagroxJ7hojgJrllRSRX66/9wH+qi3Fzw=";
+  rev = "f979b5b28a044c49c38a26636ac01bc1f7047fa5";
+  hash = "sha256-gwYRha9c3ToO/cTxLdcxGK4wR2vYjVr6aYIs2Z83zOA=";
   dependencies = [
     "avro"
     "httpfs"
