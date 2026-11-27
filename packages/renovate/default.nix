@@ -6,7 +6,7 @@
   lib,
   makeWrapper,
   nix-update-script,
-  nodejs_24,
+  nodejs_26,
   pnpm_11,
   pnpmConfigHook,
   python3,
@@ -14,7 +14,7 @@
   xcbuild,
 }:
 let
-  nodejs = nodejs_24;
+  nodejs = nodejs_26;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "renovate";
@@ -42,7 +42,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   nativeBuildInputs = [
     makeWrapper
-    nodejs_24
+    nodejs_26
     pnpm_11
     pnpmConfigHook
     python3
